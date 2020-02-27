@@ -1,3 +1,16 @@
+Import-Module .\Wallpaper.ps1
+
+Function Set-FavoriteBackground {
+    Param([string]$Folder = (Get-Item -Path ".\").FullName    )
+
+    $imgs = Get-FavoriteImages $Folder
+    $r = Get-Random -Maximum ($imgs.Length - 1)
+    write-host 'Setting Wallpaper to ' $imgs[$r].FullName
+    [Wallpaper.Setter]::SetWallpaper( $imgs[$r].FullName, 0 )
+
+    # Set-WallPaper -value $imgs[$r].FullName
+}
+
 Function Get-ExtensionAttribute {
     [CmdletBinding()]
     Param (
@@ -32,7 +45,7 @@ Function Get-ExtensionAttribute {
  
     process {
         foreach ($Object in $FullName) {
-            Write-host 'Opening' $Object
+            Write-host 'Get attribs of ' $Object
             # Check if there is a fullname attribute, in case pipeline from Get-ChildItem is used
             if ($Object.FullName) {
                 $Object = $Object.FullName
@@ -75,24 +88,19 @@ Function Get-ExtensionAttribute {
     }
 } 
 
-Function Set-FavoriteBackground {
-    Param([string]$Folder = (Get-Item -Path ".\").FullName    )
-
-    $imgs = Get-FavoriteImages $Folder
-    $r = Get-Random -Maximum ($imgs.Length - 1)
-    write-host 'Setting Wallpaper to ' $imgs[$r].FullName
-    Set-WallPaper -value $imgs[$r].FullName
-}
-
 Function Get-FavoriteImages {
     Param([string]$Folder = (Get-Item -Path ".\").FullName    )
 
-    $imgsRating = Get-ChildItem -Path $Folder -Filter *.jpg -Recurse | Get-ExtensionAttribute -ExtensionAttribute Size, Length, Kind, Rating 
+    $imgsRating = Get-ChildItem -Path $Folder -Filter *.jpg -Recurse | Get-ExtensionAttribute -ExtensionAttribute Rating 
     $imgsRatingFourStars = $imgsRating | Where-Object { $_.Rating -like '4 Stars' }
     return $imgsRatingFourStars
 }
 
-Function Set-WallPaper($Value) {
-    Set-ItemProperty -path 'HKCU:\Control Panel\Desktop\' -name wallpaper -value $value
-    rundll32.exe user32.dll, UpdatePerUserSystemParameters 1, True
-}
+# Function Set-WallPaper($Value) {
+#     Set-ItemProperty -path 'HKCU:\Control Panel\Desktop\' -name wallpaper -value $value
+#     RUNDLL32.EXE user32.dll, UpdatePerUserSystemParameters
+#     # rundll32.exe user32.dll, UpdatePerUserSystemParameters 1, True
+# }
+
+
+Set-FavoriteBackground -Folder c:\life

@@ -1,0 +1,1 @@
+Copy-Item .\Set-FavoriteBackground.ps1 C:\life\op
