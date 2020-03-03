@@ -1,4 +1,4 @@
-Import-Module .\Wallpaper.ps1
+Import-Module .\Wallpaper.ps1 -Force
 
 Function Get-Rating {
     [CmdletBinding()]
@@ -17,16 +17,18 @@ Function Get-Rating {
 
     process {
         $path = $FullName
-        Write-Host 'Get attribs of ' $path
 
         $folder = Split-Path $path
         $file = Split-Path $path -Leaf
         $shellfolder = $shell.Namespace($folder)
         $shellfile = $shellfolder.ParseName($file)
+        
+        Write-Progress -Activity "Get Ratings" -Status "Get rating attribute of $($path)" 
+        $rating = $shellfolder.GetDetailsOf($shellfile, $ranking)
 
         $r = @{
             FullName = $path
-            Rating   = $shellfolder.GetDetailsOf($shellfile, $ranking)
+            Rating   = $rating
         }
         return $r
     }
@@ -46,9 +48,10 @@ Function Set-FavoriteBackground {
 
     $imgs = Get-FavoriteImages $Folder
     $r = Get-Random -Maximum ($imgs.Length - 1)
-    Write-Host 'Setting Wallpaper to ' $imgs[$r].FullName
+    $w = $imgs[$r].FullName
 
-    Set-WallPaper -Path $imgs[$r].FullName -Style Fill
+    Write-Host 'Setting Wallpaper to ' $($w)
+    Set-Wallpaper -Path $w -Style Fill
 }
 
 Set-FavoriteBackground -Folder c:\life

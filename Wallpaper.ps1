@@ -84,4 +84,4 @@ function Set-Wallpaper {
    }
 }
 
-# Set-WallPaper -Path 'C:\life\2020\2002 Brasilien\20200224_105745.jpg' -Style Fill
+# Set-Wallpaper -Path 'C:\life\2020\2002 Brasilien\20200224_105745.jpg' -Style Fill
